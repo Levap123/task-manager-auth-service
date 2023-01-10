@@ -1,0 +1,21 @@
+version: "3"
+services:
+  db:
+    image: postgres:14.3
+    environment:
+      POSTGRES_DB: task-manager
+      POSTGRES_USER: pavel
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+  server:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - 5050:5050
+    environment:
+      DATABASE-URL: postgres://pavel:root@db:5432/task-manager
+    user: root
+    links: 
+      - db
