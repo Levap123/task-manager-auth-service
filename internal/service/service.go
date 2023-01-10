@@ -11,13 +11,15 @@ type Service struct {
 	Auth
 }
 
+type Auth interface {
+	SignIn(ctx context.Context, name, password string) (string, error)
+	Create(ctx context.Context, user *proto.User) (*proto.User, error)
+}
+
+
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
 		Auth: NewAuthService(repo.Auth),
 	}
 }
 
-type Auth interface {
-	// SignIn(ctx context.Context, name, password string) (string, error)
-	Create(ctx context.Context, user *proto.User) (*proto.User, error)
-}

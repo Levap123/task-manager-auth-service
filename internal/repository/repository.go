@@ -14,7 +14,7 @@ type Repository struct {
 
 type Auth interface {
 	Create(ctx context.Context, user *proto.User) (*proto.User, error)
-	// Get()
+	Get(ctx context.Context, email string) (*proto.User, error)
 }
 
 func NewRepoPostgres(db *sqlx.DB) *Repository {
