@@ -18,14 +18,11 @@ func (h *Handler) SignUp(ctx context.Context, user *proto.User) (*proto.User, er
 
 func (h *Handler) SignIn(ctx context.Context, creds *proto.SignInBody) (*proto.SignInResponse, error) {
 	fmt.Println(123)
-	accessToken, err := h.service.Auth.SignIn(ctx, creds.Name, creds.Password)
+	tokens, err := h.service.Auth.SignIn(ctx, creds.Name, creds.Password)
 	if err != nil {
 		return nil, err
 	}
-	response := &proto.SignInResponse{
-		AccesToken: accessToken,
-	}
-	return response, nil
+	return tokens, nil
 }
 
 // Refresh(context.Context, *Tokens) (*Tokens, error)

@@ -15,10 +15,10 @@ type tokenClaims struct {
 	UserId int `json:"user_id"`
 }
 
-func GenerateJwt(id int) (string, error) {
+func GenerateJwt(id int, days int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(72 * time.Hour).Unix(),
+			ExpiresAt: time.Now().Add(24 * time.Hour * time.Duration(days)).Unix(),
 		},
 		id,
 	})
@@ -32,7 +32,7 @@ func GenerateJwt(id int) (string, error) {
 func ParseToken(accessToken string) (int, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("nnvalid sign method")
+			return nil, errors.New("invalid sign method")
 		}
 		return sign, nil
 	})

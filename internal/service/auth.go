@@ -25,17 +25,24 @@ func (as *AuthService) Create(ctx context.Context, user *proto.User) (*proto.Use
 	return as.repo.Create(ctx, user)
 }
 
-func (as *AuthService) SignIn(ctx context.Context, name, password string) (string, error) {
+func (as *AuthService) SignIn(ctx context.Context, name, password string) (*proto.SignInResponse, error) {
 	user, err := as.repo.Get(ctx, name)
 	if err != nil {
-		return "", err
+		return nil, errors.New("invalid username")
 	}
 	if err := pass.ComparePassword(user.Password, password); err != nil {
-		return "", errors.New("invalid passsword")
+		return nil, errors.New("invalid passsword")
 	}
-	token, err := jwt.GenerateJwt(int(user.Id))
+	accesToken, err := jwt.GenerateJwt(int(user.Id), 1)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return token, nil
+	refreshToken, err := jwt.GenerateJwt(int(user.Id), 30)
+	if err != nil {
+		return nil, err
+	}
+	return &proto.SignInResponse{
+		AccesToken:   accesToken,
+		RefreshToken: refreshToken,
+	}, nil
 }
