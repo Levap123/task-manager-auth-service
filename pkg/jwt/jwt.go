@@ -40,6 +40,9 @@ func ParseToken(accessToken string) (int, error) {
 		return 0, err
 	}
 	claims, ok := token.Claims.(*tokenClaims)
+	if claims.ExpiresAt < time.Now().Unix() {
+		return 0, errors.New("token expired")
+	}
 	if !ok {
 		return 0, errors.New("invalid claims")
 	}
