@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 
+	errs "github.com/Levap123/task-manager-auth-service/pkg/errors"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -41,7 +43,7 @@ func ParseToken(accessToken string) (int, error) {
 	}
 	claims, ok := token.Claims.(*tokenClaims)
 	if claims.ExpiresAt < time.Now().Unix() {
-		return 0, errors.New("token expired")
+		return 0, errs.ErrTokenExpired
 	}
 	if !ok {
 		return 0, errors.New("invalid claims")

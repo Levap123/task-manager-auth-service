@@ -46,3 +46,22 @@ func (as *AuthService) SignIn(ctx context.Context, name, password string) (*prot
 		RefreshToken: refreshToken,
 	}, nil
 }
+
+func (as *AuthService) Refresh(ctx context.Context, tokens *proto.Tokens) (*proto.Tokens, error) {
+	userId, err := jwt.ParseToken(tokens.Refresh)
+	if err != nil {
+		return nil, err
+	}
+	refresh, err := jwt.GenerateJwt(userId, 30)
+	if err != nil {
+		return nil, err
+	}
+	access, err := jwt.GenerateJwt(userId, 2)
+	if err != nil {
+		return nil, err
+	}
+	return &proto.Tokens{
+		Acces:   access,
+		Refresh: refresh,
+	}, nil
+}

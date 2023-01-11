@@ -18,7 +18,6 @@ func (h *Handler) SignUp(ctx context.Context, user *proto.User) (*proto.User, er
 }
 
 func (h *Handler) SignIn(ctx context.Context, creds *proto.SignInBody) (*proto.SignInResponse, error) {
-	fmt.Println(123)
 	tokens, err := h.service.Auth.SignIn(ctx, creds.Name, creds.Password)
 	if err != nil {
 		return nil, err
@@ -36,5 +35,6 @@ func (h *Handler) Validate(ctx context.Context, in *proto.Access) (*proto.UserId
 	}
 	return response, nil
 }
-
-// Refresh(context.Context, *Tokens) (*Tokens, error)
+func (h *Handler) Refresh(ctx context.Context, in *proto.Tokens) (*proto.Tokens, error) {
+	return h.service.Refresh(ctx, in)
+}
