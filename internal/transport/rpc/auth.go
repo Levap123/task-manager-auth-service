@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Levap123/task-manager-auth-service/pkg/jwt"
 	"github.com/Levap123/task-manager-auth-service/proto"
 )
 
@@ -23,6 +24,17 @@ func (h *Handler) SignIn(ctx context.Context, creds *proto.SignInBody) (*proto.S
 		return nil, err
 	}
 	return tokens, nil
+}
+
+func (h *Handler) Validate(ctx context.Context, in *proto.Access) (*proto.UserId, error) {
+	userId, err := jwt.ParseToken(in.Access)
+	if err != nil {
+		return nil, err
+	}
+	response := &proto.UserId{
+		Id: uint64(userId),
+	}
+	return response, nil
 }
 
 // Refresh(context.Context, *Tokens) (*Tokens, error)

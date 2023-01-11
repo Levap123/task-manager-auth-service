@@ -9,9 +9,9 @@ import (
 )
 
 func InitDb(cfg *config.Configs) (*sqlx.DB, error) {
-	psqlInfo := fmt.Sprintf("host=localhost port=%s user=%s "+
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		 cfg.DB_PORT, cfg.DB_USER_NAME, cfg.DB_PASSWORD, cfg.DB_NAME)
+		cfg.DB_HOST, cfg.DB_PORT, cfg.DB_USER_NAME, cfg.DB_PASSWORD, cfg.DB_NAME)
 	db, err := sqlx.Open("pgx", psqlInfo)
 	if err != nil {
 		return nil, err

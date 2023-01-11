@@ -9,12 +9,18 @@ service Auth {
     rpc SignIn(SignInBody) returns (SignInResponse);
     rpc SignUp (User) returns (User);
     rpc Refresh(Tokens) returns (Tokens);
+    rpc Validate (Access) returns(UserId);
 }
 
 message Tokens {
     string acces = 1;
     string refresh = 2;
 }
+
+message UserId {
+    uint64 id = 1;
+}
+
 message User {
     uint64 id = 1;
     string name = 2;
@@ -34,4 +40,8 @@ message SignInResponse {
 message SignInBody {
     string name = 1;
     string password = 2;
+}
+
+message Access {
+    string access = 1;
 }

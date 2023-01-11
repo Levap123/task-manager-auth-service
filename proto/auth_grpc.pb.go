@@ -21,6 +21,7 @@ type AuthClient interface {
 	SignIn(ctx context.Context, in *SignInBody, opts ...grpc.CallOption) (*SignInResponse, error)
 	SignUp(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	Refresh(ctx context.Context, in *Tokens, opts ...grpc.CallOption) (*Tokens, error)
+	Validate(ctx context.Context, in *Access, opts ...grpc.CallOption) (*UserId, error)
 }
 
 type authClient struct {
@@ -58,6 +59,15 @@ func (c *authClient) Refresh(ctx context.Context, in *Tokens, opts ...grpc.CallO
 	return out, nil
 }
 
+func (c *authClient) Validate(ctx context.Context, in *Access, opts ...grpc.CallOption) (*UserId, error) {
+	out := new(UserId)
+	err := c.cc.Invoke(ctx, "/proto.Auth/Validate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility
@@ -65,6 +75,7 @@ type AuthServer interface {
 	SignIn(context.Context, *SignInBody) (*SignInResponse, error)
 	SignUp(context.Context, *User) (*User, error)
 	Refresh(context.Context, *Tokens) (*Tokens, error)
+	Validate(context.Context, *Access) (*UserId, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -80,6 +91,9 @@ func (UnimplementedAuthServer) SignUp(context.Context, *User) (*User, error) {
 }
 func (UnimplementedAuthServer) Refresh(context.Context, *Tokens) (*Tokens, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Refresh not implemented")
+}
+func (UnimplementedAuthServer) Validate(context.Context, *Access) (*UserId, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Validate not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 
@@ -148,6 +162,24 @@ func _Auth_Refresh_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_Validate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Access)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).Validate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Auth/Validate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).Validate(ctx, req.(*Access))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -167,7 +199,11 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Refresh",
 			Handler:    _Auth_Refresh_Handler,
 		},
+		{
+			MethodName: "Validate",
+			Handler:    _Auth_Validate_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "auth.proto",
+	Metadata: "proto/auth.proto",
 }

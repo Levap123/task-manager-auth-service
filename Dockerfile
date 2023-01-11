@@ -16,8 +16,6 @@ COPY --from=build /app/main .
 COPY --from=build /app/up.sql . 
 COPY --from=build /app/.env . 
 
-EXPOSE 8080
-
 USER root:root
 
 ENTRYPOINT ["./main"]
