@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+
 func main() {
 	cfg := config.NewConfigs()
 	db, err := postgres.InitDb(cfg)

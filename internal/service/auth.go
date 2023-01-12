@@ -28,7 +28,7 @@ func (as *AuthService) Create(ctx context.Context, user *proto.User) (*proto.Use
 func (as *AuthService) SignIn(ctx context.Context, name, password string) (*proto.SignInResponse, error) {
 	user, err := as.repo.Get(ctx, name)
 	if err != nil {
-		return nil, errors.New("invalid username")
+		return nil, err
 	}
 	if err := pass.ComparePassword(user.Password, password); err != nil {
 		return nil, errors.New("invalid passsword")
