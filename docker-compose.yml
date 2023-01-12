@@ -16,4 +16,4 @@ services:
       - "5050:5050"
     user: root
     links: 
-      - db
+      - db 
