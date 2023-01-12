@@ -29,6 +29,7 @@ func main() {
 	}
 	s := grpc.NewServer()
 	proto.RegisterAuthServer(s, handlerRPC)
+	log.Println("started")
 	if err := s.Serve(listener); err != nil {
 		log.Fatalln(err)
 	}
